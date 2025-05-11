@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body {
+            transition: background-color 0.5s ease, color 0.5s ease;
+            text-align: center;
+            padding: 2rem;
+            font-family: Arial, sans-serif;
+        }
+
+        .dark-theme {
+            background-color: #1a1a1a;
+            color: white;
+        }
+
+        button {
+            padding: 1rem 2rem;
+            margin: 1rem;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: transform 0.3s ease, background-color 0.3s ease;
+            background-color: #4CAF50;
+            color: white;
+        }
+
+        button:hover {
+            transform: scale(1.05);
+            background-color: #45a049;
+        }
+
+        #logo {
+            width: 150px;
+            margin: 2rem;
+            opacity: 0;
+            animation: fadeIn 1s ease forwards;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .spin {
+            animation: spin 1s linear;
+        }
+
+        .preference-message {
+            margin-top: 2rem;
+            padding: 1rem;
+            border-radius: 5px;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <button id="themeToggle">Toggle Dark Mode</button>
+    <button id="animateButton">Spin Logo</button>
+    <br>
+    <img src="https://via.placeholder.com/150" alt="Logo" id="logo">
+    <div class="preference-message" id="message"></div>
+
+    <script>
+        // Load saved theme preference
+        document.addEventListener('DOMContentLoaded', () => {
+            const savedTheme = localStorage.getItem('themePreference');
+            if (savedTheme === 'dark') {
+                document.body.classList.add('dark-theme');
+            }
+            
+            // Show welcome message with preference status
+            const message = document.getElementById('message');
+            message.textContent = savedTheme 
+                ? `Loaded your preference: ${savedTheme} theme` 
+                : 'Using default theme settings';
+            message.style.display = 'block';
+            setTimeout(() => message.style.display = 'none', 2000);
+        });
+
+        // Theme toggle handler
+        document.getElementById('themeToggle').addEventListener('click', () => {
+            document.body.classList.toggle('dark-theme');
+            const theme = document.body.classList.contains('dark-theme') ? 'dark' : 'light';
+            localStorage.setItem('themePreference', theme);
+            
+            // Show preference saved message
+            const message = document.getElementById('message');
+            message.textContent = `Theme preference saved: ${theme}`;
+            message.style.display = 'block';
+            setTimeout(() => message.style.display = 'none', 2000);
+        });
+
+        // Animation trigger handler
+        document.getElementById('animateButton').addEventListener('click', () => {
+            const logo = document.getElementById('logo');
+            
+            // Remove existing animation class
+            logo.classList.remove('spin');
+            
+            // Trigger reflow before adding class again
+            void logo.offsetWidth;
+            
+            // Add animation class
+            logo.classList.add('spin');
+            
+            // Cleanup after animation
+            logo.addEventListener('animationend', () => {
+                logo.classList.remove('spin');
+            }, {once: true});
+        });
+    </script>
+</body>
+</html>
